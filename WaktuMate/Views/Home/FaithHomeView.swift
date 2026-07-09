@@ -14,8 +14,8 @@ struct FaithHomeView: View {
                         ReferenceLibraryView(profile: appState.selectedFaithProfile)
                     }
                     .padding(.horizontal, 16)
-                    .padding(.top, 18)
-                    .padding(.bottom, 96)
+                    .padding(.top, AppLayout.tabPageTopPadding)
+                    .padding(.bottom, AppLayout.tabPageBottomPadding)
                 }
                 .smoothScroll()
                 .wmTabSafeScroll()

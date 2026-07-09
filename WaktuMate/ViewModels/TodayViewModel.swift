@@ -47,6 +47,49 @@ final class TodayViewModel: ObservableObject {
         return AppDateFormatting.displayTime(rawTime, uses24HourTime: uses24HourTime)
     }
 
+    var completedPrayerCount: Int {
+        guard let todayPrayerTime else {
+            return 0
+        }
+
+        return PrayerName.allCases.filter { prayer in
+            guard let date = todayPrayerTime.dateTime(for: prayer) else {
+                return false
+            }
+
+            return date <= Date()
+        }.count
+    }
+
+    var totalPrayerCount: Int {
+        PrayerName.allCases.count
+    }
+
+    var dayWindowText: String {
+        guard let todayPrayerTime else {
+            return "--"
+        }
+
+        return "\(displayTime(todayPrayerTime.subuh)) - \(displayTime(todayPrayerTime.isyak))"
+    }
+
+    var isUsingFallbackData: Bool {
+        errorMessage != nil
+    }
+
+    func displayTime(_ time: String) -> String {
+        AppDateFormatting.displayTime(time, uses24HourTime: uses24HourTime)
+    }
+
+    func hasPassed(_ row: PrayerDisplayRow, referenceDate: Date = Date()) -> Bool {
+        guard let todayPrayerTime,
+              let date = todayPrayerTime.dateTime(forTimeString: row.time) else {
+            return false
+        }
+
+        return date <= referenceDate
+    }
+
     func loadTodayPrayerTimes() async {
         isLoading = true
         errorMessage = nil

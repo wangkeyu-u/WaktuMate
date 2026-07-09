@@ -10,6 +10,7 @@ enum PrayerTimeServiceError: LocalizedError {
     case httpStatus(Int)
     case emptyData
     case missingMockData
+    case unknownZone(String)
 
     var errorDescription: String? {
         switch self {
@@ -23,6 +24,8 @@ enum PrayerTimeServiceError: LocalizedError {
             return "No prayer time data was found."
         case .missingMockData:
             return "Offline sample data is missing from the app bundle."
+        case .unknownZone(let zone):
+            return "The detected prayer zone \(zone) is not included in the app."
         }
     }
 }
@@ -47,6 +50,40 @@ final class PrayerTimeService: PrayerTimeServiceProtocol {
             lastFallbackMessage = "Unable to load prayer times. Showing offline sample data."
             return mockPrayerTimes
         }
+    }
+
+    func detectPrayerZone(latitude: Double, longitude: Double) async throws -> PrayerZone {
+        var components = URLComponents(string: "https://api.waktusolat.app/v2/solat/gps/\(latitude)/\(longitude)")
+        let calendar = AppDateFormatting.malaysiaCalendar
+        let dateComponents = calendar.dateComponents([.year, .month], from: Date())
+
+        components?.queryItems = [
+            URLQueryItem(name: "year", value: String(dateComponents.year ?? 2026)),
+            URLQueryItem(name: "month", value: String(dateComponents.month ?? 1))
+        ]
+
+        guard let url = components?.url else {
+            throw PrayerTimeServiceError.invalidURL
+        }
+
+        let (data, response) = try await session.data(from: url)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw PrayerTimeServiceError.invalidResponse
+        }
+
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            throw PrayerTimeServiceError.httpStatus(httpResponse.statusCode)
+        }
+
+        let apiResponse = try decoder.decode(WaktuSolatGPSPrayerResponse.self, from: data)
+        let zone = PrayerZone.zone(for: apiResponse.zone)
+
+        guard zone.id.caseInsensitiveCompare(apiResponse.zone) == .orderedSame else {
+            throw PrayerTimeServiceError.unknownZone(apiResponse.zone)
+        }
+
+        return zone
     }
 
     private func fetchRemotePrayerTimes(zone: String, month: Int, year: Int) async throws -> [PrayerTime] {
@@ -90,6 +127,10 @@ final class PrayerTimeService: PrayerTimeServiceProtocol {
         let data = try Data(contentsOf: url)
         return try decoder.decode([PrayerTime].self, from: data)
     }
+}
+
+private struct WaktuSolatGPSPrayerResponse: Decodable {
+    let zone: String
 }
 
 private struct WaktuSolatV2Response: Decodable {

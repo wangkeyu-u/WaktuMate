@@ -12,6 +12,7 @@ struct SettingsView: View {
 
                 ScrollView {
                     LazyVStack(spacing: 16) {
+                        settingsHeader
                         profileSection
                         languageSection
                         statsSection
@@ -26,8 +27,8 @@ struct SettingsView: View {
                         dangerSection
                     }
                     .padding(.horizontal, 16)
-                    .padding(.top, 18)
-                    .padding(.bottom, 96)
+                    .padding(.top, AppLayout.tabPageTopPadding)
+                    .padding(.bottom, AppLayout.tabPageBottomPadding)
                 }
                 .smoothScroll()
                 .wmTabSafeScroll()
@@ -52,6 +53,57 @@ struct SettingsView: View {
                     "这会重置打卡记录、念珠计数、地区和提醒设置。"
                 ))
             }
+        }
+    }
+
+    private var settingsHeader: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .top, spacing: 14) {
+                Image(systemName: "slider.horizontal.3")
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 52, height: 52)
+                    .background(Color.wmPrimaryDark, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(appState.text("Control Center", "Pusat Kawalan", "控制中心"))
+                        .font(.title2.bold())
+                    Text(appState.text(
+                        "Profile, language, reminders, and local data in one place.",
+                        "Profil, bahasa, peringatan dan data setempat di satu tempat.",
+                        "集中管理版本、语言、提醒和本地数据。"
+                    ))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+                .layoutPriority(1)
+            }
+
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 8) {
+                    settingsPill(appState.selectedFaithProfile.localizedDisplayName(appState.language), systemImage: appState.selectedFaithProfile.symbolName)
+                    settingsPill(appState.language.displayName, systemImage: "character.bubble.fill")
+                    if appState.selectedFaithProfile.supportsPrayerTimes {
+                        settingsPill(viewModel.selectedZone.id, systemImage: "mappin.and.ellipse")
+                    }
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    settingsPill(appState.selectedFaithProfile.localizedDisplayName(appState.language), systemImage: appState.selectedFaithProfile.symbolName)
+                    settingsPill(appState.language.displayName, systemImage: "character.bubble.fill")
+                    if appState.selectedFaithProfile.supportsPrayerTimes {
+                        settingsPill(viewModel.selectedZone.id, systemImage: "mappin.and.ellipse")
+                    }
+                }
+            }
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .stroke(Color.white.opacity(0.18), lineWidth: 1)
         }
     }
 
@@ -321,6 +373,16 @@ struct SettingsView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .background(Color(.tertiarySystemGroupedBackground).opacity(0.72), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    private func settingsPill(_ text: String, systemImage: String) -> some View {
+        Label(text, systemImage: systemImage)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 7)
+            .background(Color(.tertiarySystemGroupedBackground).opacity(0.82), in: Capsule())
     }
 
     private var activeDaysTile: some View {

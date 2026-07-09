@@ -26,14 +26,31 @@ struct NearbyPlaceNavigationView: View {
                 .layoutPriority(1)
             }
 
-            if let coordinate = locationService.location?.coordinate {
-                Text(String(format: "Location ready: %.4f, %.4f", coordinate.latitude, coordinate.longitude))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            } else if let message = locationService.message {
-                Text(message)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            placeSearchBand
+        }
+        .wmCard()
+    }
+
+    private var placeSearchBand: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "map")
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 52, height: 52)
+                    .background(.white.opacity(0.2), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(profile.placeSearchQuery.capitalized)
+                        .font(.headline)
+                        .foregroundStyle(.white)
+
+                    Text(locationStatusText)
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.78))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .layoutPriority(1)
             }
 
             ViewThatFits(in: .horizontal) {
@@ -48,7 +65,39 @@ struct NearbyPlaceNavigationView: View {
                 }
             }
         }
-        .wmCard()
+        .padding(14)
+        .background(
+            LinearGradient(
+                colors: [.wmPrimaryDark, .wmPrimary, Color(red: 0.16, green: 0.60, blue: 0.68)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            ),
+            in: RoundedRectangle(cornerRadius: 18, style: .continuous)
+        )
+        .overlay(alignment: .topTrailing) {
+            Image(systemName: "point.topleft.down.curvedto.point.bottomright.up")
+                .font(.system(size: 58, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.10))
+                .padding(12)
+                .accessibilityHidden(true)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+    }
+
+    private var locationStatusText: String {
+        if let coordinate = locationService.location?.coordinate {
+            return String(format: "Location ready: %.4f, %.4f", coordinate.latitude, coordinate.longitude)
+        }
+
+        if let message = locationService.message {
+            return message
+        }
+
+        return appState.text(
+            "Use location for a nearer result, or open a broad search.",
+            "Guna lokasi untuk hasil lebih dekat, atau buka carian umum.",
+            "使用定位获取更近结果，也可以直接打开搜索。"
+        )
     }
 
     private var requestLocationButton: some View {
@@ -59,7 +108,7 @@ struct NearbyPlaceNavigationView: View {
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.bordered)
-        .tint(.wmPrimary)
+        .tint(.white)
     }
 
     private var openMapsButton: some View {
@@ -70,7 +119,7 @@ struct NearbyPlaceNavigationView: View {
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.borderedProminent)
-        .tint(.wmPrimary)
+        .tint(.white)
     }
 
     private func openGoogleMaps() {

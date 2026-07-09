@@ -9,6 +9,11 @@ extension Color {
     static let wmCard = Color(.secondarySystemGroupedBackground)
 }
 
+enum AppLayout {
+    static let tabPageTopPadding: CGFloat = 86
+    static let tabPageBottomPadding: CGFloat = 96
+}
+
 struct CardModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -41,10 +46,9 @@ extension View {
 
     func wmTabSafeScroll() -> some View {
         self
-            .padding(.bottom, 96)
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 Color.clear
-                    .frame(height: 24)
+                    .frame(height: 18)
             }
     }
 }

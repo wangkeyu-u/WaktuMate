@@ -9,7 +9,8 @@ WaktuMate Malaysia is a SwiftUI prayer companion app for Muslims in Malaysia. It
 - Profile-specific app versions: Islam keeps Today and Tracker, while other profiles use a simpler Home, Tools, and Settings structure.
 - GPT-generated faith-specific background images for each profile, bundled in `Assets.xcassets`.
 - Three app languages: English, Bahasa Melayu, and Chinese, switchable from Settings.
-- Malaysia zone picker with MVP zones from Kuala Lumpur, Selangor, Johor, Penang, Melaka, Perak, Sabah, and Sarawak.
+- Malaysia zone picker with the full 61-zone Waktu Solat/JAKIM zone list, searchable by state, district, or code.
+- Location-based prayer-zone detection through the Waktu Solat GPS zone endpoint.
 - Waktu Solat API integration using `https://api.waktusolat.app/v2/solat/{zone}` with `year` and `month` query parameters.
 - Offline fallback through `MockPrayerTimes.json` so the demo never opens to a blank state.
 - Tracker tab for the five daily prayers, excluding Syuruk.
@@ -25,7 +26,7 @@ WaktuMate Malaysia is a SwiftUI prayer companion app for Muslims in Malaysia. It
 - Apple Calendar export for selected holidays.
 - Settings for zone, notification toggle, per-prayer notification toggles, reminder offset, time format, and clearing local data.
 - Local notifications using `UserNotifications`.
-- Dark mode friendly card-based SwiftUI UI.
+- Dark mode friendly SwiftUI UI with a dashboard-style Today screen, timeline prayer rows, tool shortcuts, and settings summaries.
 
 ## Tech Stack
 
@@ -55,7 +56,7 @@ WaktuMate/
 
 Core services:
 
-- `PrayerTimeService`: fetches Waktu Solat v2 monthly data and falls back to bundled mock data.
+- `PrayerTimeService`: fetches Waktu Solat v2 monthly data, detects a prayer zone from GPS coordinates, and falls back to bundled mock data.
 - `NotificationService`: requests permission, cancels old prayer notifications, and schedules today's enabled prayer reminders.
 - `StorageService`: stores selected zone, language, settings, tracker records, faith profiles, practice stats, holiday reminder preferences, and Tasbih state in `UserDefaults`.
 - `LocationService`: requests location, reads compass heading, prepares Google Maps URLs, and calculates the Qibla bearing.
@@ -78,6 +79,12 @@ GET https://api.waktusolat.app/v2/solat/{zone}?year=2026&month=7
 
 The v2 API returns daily prayer times as epoch seconds in the `prayers` array. The app maps those into display-ready Malaysia-time strings.
 
+For automatic zone matching, Settings also calls the GPS prayer endpoint and uses the returned `zone` field:
+
+```text
+GET https://api.waktusolat.app/v2/solat/gps/{latitude}/{longitude}?year=2026&month=7
+```
+
 ## How To Run
 
 1. Open `WaktuMate.xcodeproj` in Xcode 26 or newer.
@@ -99,7 +106,8 @@ xcodebuild -project WaktuMate.xcodeproj -scheme WaktuMate -destination 'generic/
 - Prayer models
 - Next-prayer calculation
 - Live countdown
-- Zone picker
+- Searchable full Malaysia zone picker
+- GPS prayer-zone detection
 - Waktu Solat API service
 - Tracker persistence
 - Weekly stats and streak
@@ -115,7 +123,7 @@ xcodebuild -project WaktuMate.xcodeproj -scheme WaktuMate -destination 'generic/
 - Apple Calendar holiday export
 - Private profile and faith attribute settings
 - Local notification scheduling
-- Dark mode friendly UI polish
+- Dashboard-style Today UI, tool shortcuts, and settings summaries
 
 ## Screenshot Placeholders
 
@@ -139,10 +147,8 @@ xcodebuild -project WaktuMate.xcodeproj -scheme WaktuMate -destination 'generic/
 
 ## Future Work
 
-- Qibla compass using CoreLocation heading.
 - Mosque / Surau finder using MapKit.
 - Home Screen Widget for next prayer countdown.
 - Ramadan mode with Imsak and Iftar countdown.
-- Full Malaysia zone list.
-- Multi-language support: English, Malay, Chinese.
 - Offline monthly cache.
+- Deeper accessibility QA for large Dynamic Type sizes.
