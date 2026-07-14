@@ -1,3 +1,21 @@
+# WaktuMate — 马来西亚礼拜时间助手 / Malaysia Prayer Companion
+
+> SwiftUI 马来西亚穆斯林礼拜时间 App —— JAKIM 数据、下一拜倒计时、本地提醒、赞珠计数器、朝拜罗盘。
+>
+> A SwiftUI prayer companion app for Muslims in Malaysia — JAKIM-based prayer times, next-prayer countdown, local reminders, Tasbih counter, and Qibla compass.
+
+[![Platform](https://img.shields.io/badge/platform-iOS%2017%2B-blue)](https://developer.apple.com/ios/)
+[![Language](https://img.shields.io/badge/language-SwiftUI-orange)](https://developer.apple.com/swiftui/)
+[![API](https://img.shields.io/badge/API-Waktu%20Solat%20v2-success)](https://api.waktusolat.app/)
+
+---
+
+## 项目简介（中文）
+
+WaktuMate 是一款 SwiftUI 开发的马来西亚礼拜时间助手 App。基于 JAKIM/e-Solat 数据按区域显示礼拜时间，高亮下一拜并实时倒计时，支持本地通知提醒、每日礼拜打卡追踪、赞珠计数器（33/99/100 目标）、朝拜罗盘和练习计时器。支持英文、马来语和中文三语，内置离线兜底数据，断网也能用。
+
+---
+
 # WaktuMate Malaysia
 
 WaktuMate Malaysia is a SwiftUI prayer companion app for Muslims in Malaysia. It shows JAKIM/e-Solat based prayer times by Malaysia zone, highlights the next prayer, runs a live countdown, schedules local reminders, tracks daily prayer completion, and includes a Tasbih Counter.
