@@ -143,26 +143,6 @@ xcodebuild -project WaktuMate.xcodeproj -scheme WaktuMate -destination 'generic/
 - Local notification scheduling
 - Dashboard-style Today UI, tool shortcuts, and settings summaries
 
-## Screenshot Placeholders
-
-- Today: next prayer countdown and prayer time list.
-- Tracker: daily checklist and weekly stats.
-- Onboarding: faith profile selection.
-- Tools: nearby places, compass, timer, Tasbih Counter, and references.
-- Settings: language, faith profile, private profile, stats, attributes, holidays, zone, notifications, and display preferences.
-
-## Interview Talking Points
-
-- I started with a working offline path, then layered the remote API on top. That keeps the demo stable even when the network or API fails.
-- The app uses MVVM so the SwiftUI views stay focused on rendering state, while view models own countdown, tracker stats, and settings behavior.
-- Date handling is centralized around the Malaysia time zone, which matters because prayer times are local and the API returns epoch timestamps.
-- Local notifications are intentionally scheduled from today's loaded prayer times, so reminders match the selected zone and user offset.
-- UserDefaults is enough for the MVP because the data is small and local-only, but the service boundary makes SwiftData migration straightforward.
-- Faith profiles let the app support different versions without incorrectly applying Islamic prayer-time screens to every user.
-- Google Maps is opened through a URL scheme first, with a browser fallback, so the feature works even if Google Maps is not installed.
-- Holiday reminders are filtered by the selected faith profile before scheduling notifications or creating Calendar events.
-- Generated backgrounds are used as app assets and softened with a readability overlay so the interface remains usable.
-
 ## Future Work
 
 - Mosque / Surau finder using MapKit.
