@@ -1,8 +1,4 @@
-# Product
-
-## Register
-
-product
+# Product design
 
 ## Users
 

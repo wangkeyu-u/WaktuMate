@@ -1,152 +1,39 @@
-# WaktuMate — 马来西亚礼拜时间助手 / Malaysia Prayer Companion
-
-> SwiftUI 马来西亚穆斯林礼拜时间 App —— JAKIM 数据、下一拜倒计时、本地提醒、赞珠计数器、朝拜罗盘。
->
-> A SwiftUI prayer companion app for Muslims in Malaysia — JAKIM-based prayer times, next-prayer countdown, local reminders, Tasbih counter, and Qibla compass.
-
-[![Platform](https://img.shields.io/badge/platform-iOS%2017%2B-blue)](https://developer.apple.com/ios/)
-[![Language](https://img.shields.io/badge/language-SwiftUI-orange)](https://developer.apple.com/swiftui/)
-[![API](https://img.shields.io/badge/API-Waktu%20Solat%20v2-success)](https://api.waktusolat.app/)
-
----
-
-## 项目简介（中文）
-
-WaktuMate 是一款 SwiftUI 开发的马来西亚礼拜时间助手 App。基于 JAKIM/e-Solat 数据按区域显示礼拜时间，高亮下一拜并实时倒计时，支持本地通知提醒、每日礼拜打卡追踪、赞珠计数器（33/99/100 目标）、朝拜罗盘和练习计时器。支持英文、马来语和中文三语，内置离线兜底数据，断网也能用。
-
----
-
 # WaktuMate Malaysia
 
-WaktuMate Malaysia is a SwiftUI prayer companion app for Muslims in Malaysia. It shows JAKIM/e-Solat based prayer times by Malaysia zone, highlights the next prayer, runs a live countdown, schedules local reminders, tracks daily prayer completion, and includes a Tasbih Counter.
+SwiftUI 日常礼拜工具：按马来西亚区域显示礼拜时间、下一拜倒计时和本地通知，附带打卡、Tasbih、朝拜罗盘和练习计时。首次启动选择信仰档案；不同档案使用各自的工具与参考入口。
 
-## Features
+## 运行
 
-- Today tab with selected zone, Gregorian date, Hijri date, next prayer, countdown, and all daily prayer times.
-- First-run faith profile selection for Islam, Christianity, Buddhism, Hinduism, Taoism, Sikhism, and a neutral General mode.
-- Profile-specific app versions: Islam keeps Today and Tracker, while other profiles use a simpler Home, Tools, and Settings structure.
-- GPT-generated faith-specific background images for each profile, bundled in `Assets.xcassets`.
-- Three app languages: English, Bahasa Melayu, and Chinese, switchable from Settings.
-- Malaysia zone picker with the full 61-zone Waktu Solat/JAKIM zone list, searchable by state, district, or code.
-- Location-based prayer-zone detection through the Waktu Solat GPS zone endpoint.
-- Waktu Solat API integration using `https://api.waktusolat.app/v2/solat/{zone}` with `year` and `month` query parameters.
-- Offline fallback through `MockPrayerTimes.json` so the demo never opens to a blank state.
-- Tracker tab for the five daily prayers, excluding Syuruk.
-- Weekly completion percentage and current full-day streak.
-- Tasbih Counter with 33, 99, and 100 targets, local persistence, and target haptic feedback.
-- Nearby place search that opens Google Maps for mosques, churches, temples, gurdwaras, or general places of worship depending on profile.
-- Qibla Compass for the Islam profile using CoreLocation heading and location-based bearing to Makkah.
-- Practice Timer for prayer, meditation, reflection, puja, paath, simran, or general quiet practice.
-- Reference Library links that adapt to the selected faith profile.
-- Local personal profile storage for each faith profile, including community/place, practice goal, preferred time, and private prompts.
-- Practice stats in Settings: active days, prayer completion days, Tasbih total, and timer minutes.
-- Faith-specific holiday reminders with system notifications.
-- Apple Calendar export for selected holidays.
-- Settings for zone, notification toggle, per-prayer notification toggles, reminder offset, time format, and clearing local data.
-- Local notifications using `UserNotifications`.
-- Dark mode friendly SwiftUI UI with a dashboard-style Today screen, timeline prayer rows, tool shortcuts, and settings summaries.
-
-## Tech Stack
-
-- iOS 17+
-- SwiftUI
-- MVVM
-- URLSession
-- Codable
-- UserDefaults
-- UserNotifications
-- CoreLocation
-- EventKit
-- Google Maps URL scheme / web fallback
-- Foundation Date / Calendar
-
-## Architecture
-
-```text
-WaktuMate/
-  App/
-  Models/
-  Services/
-  ViewModels/
-  Views/
-  Resources/
-```
-
-Core services:
-
-- `PrayerTimeService`: fetches Waktu Solat v2 monthly data, detects a prayer zone from GPS coordinates, and falls back to bundled mock data.
-- `NotificationService`: requests permission, cancels old prayer notifications, and schedules today's enabled prayer reminders.
-- `StorageService`: stores selected zone, language, settings, tracker records, faith profiles, practice stats, holiday reminder preferences, and Tasbih state in `UserDefaults`.
-- `LocationService`: requests location, reads compass heading, prepares Google Maps URLs, and calculates the Qibla bearing.
-- `CalendarService`: writes selected faith holidays to Apple Calendar when the user chooses to export them.
-
-Profile behavior:
-
-- `FaithOnboardingView` appears on first launch and saves the user's selected faith profile locally.
-- Islam profile shows `Today`, `Tracker`, `Tools`, and `Settings`.
-- Other profiles show `Home`, `Tools`, and `Settings`, with profile-specific nearby places and references.
-- Settings exposes faith attributes, private profile questions, language, holiday reminders, and Apple Calendar export.
-
-## API Data Source
-
-The app uses the Malaysia Waktu Solat API, which provides prayer times from JAKIM e-Solat data. The implemented endpoint is:
-
-```text
-GET https://api.waktusolat.app/v2/solat/{zone}?year=2026&month=7
-```
-
-The v2 API returns daily prayer times as epoch seconds in the `prayers` array. The app maps those into display-ready Malaysia-time strings.
-
-For automatic zone matching, Settings also calls the GPS prayer endpoint and uses the returned `zone` field:
-
-```text
-GET https://api.waktusolat.app/v2/solat/gps/{latitude}/{longitude}?year=2026&month=7
-```
-
-## How To Run
-
-1. Open `WaktuMate.xcodeproj` in Xcode 26 or newer.
-2. Select the `WaktuMate` scheme.
-3. Choose an iOS 17+ simulator.
-4. Run the app.
-
-Command-line build:
+最低系统为 iOS 17。用 Xcode 打开仓库根目录的工程，选择 `WaktuMate` scheme 和 iPhone 模拟器或真机：
 
 ```bash
-xcodebuild -project WaktuMate.xcodeproj -scheme WaktuMate -destination 'generic/platform=iOS Simulator' build
+open WaktuMate.xcodeproj
+xcodebuild -project WaktuMate.xcodeproj -scheme WaktuMate \
+  -destination 'generic/platform=iOS Simulator' build
 ```
 
-## Completed MVP
+真机运行需选择自己的开发者 Team。定位、朝向、系统通知和日历导出依赖设备能力及相应权限。
 
-- TabView foundation
-- Today UI
-- Mock prayer time fallback
-- Prayer models
-- Next-prayer calculation
-- Live countdown
-- Searchable full Malaysia zone picker
-- GPS prayer-zone detection
-- Waktu Solat API service
-- Tracker persistence
-- Weekly stats and streak
-- Tasbih Counter
-- Faith profile onboarding
-- Google Maps nearby place search
-- Qibla Compass
-- Practice Timer
-- Profile-aware reference library
-- Faith-specific generated backgrounds
-- English / Bahasa Melayu / Chinese UI language switcher
-- Faith-specific holiday notifications
-- Apple Calendar holiday export
-- Private profile and faith attribute settings
-- Local notification scheduling
-- Dashboard-style Today UI, tool shortcuts, and settings summaries
+## 数据与状态
 
-## Future Work
+`PrayerTimeService` 通过 Waktu Solat v2 获取指定区域的月度时间，或用 GPS 端点查区域。远程读取失败时，服务返回内置 `MockPrayerTimes.json` 并显示离线示例提示。这是展示用数据，不是当前月份的离线缓存。
 
-- Mosque / Surau finder using MapKit.
-- Home Screen Widget for next prayer countdown.
-- Ramadan mode with Imsak and Iftar countdown.
-- Offline monthly cache.
-- Deeper accessibility QA for large Dynamic Type sizes.
+`TodayViewModel` 计算下一拜和倒计时；日期显示使用 `Asia/Kuala_Lumpur`。`NotificationService` 调度当天启用的提醒。档案、语言、打卡和计数保存在 `UserDefaults`；没有账号同步。
+
+## 目录
+
+```text
+WaktuMate.xcodeproj/     Xcode target 与构建设置
+WaktuMate/App/          应用入口和档案导航
+WaktuMate/Models/       日期、区域、礼拜、档案和设置
+WaktuMate/Services/     API、存储、通知、定位和日历
+WaktuMate/ViewModels/   页面状态和计算
+WaktuMate/Views/        SwiftUI 界面
+WaktuMate/Resources/    区域与离线示例
+```
+
+[设计说明](docs/design.md)记录界面和档案的原则。各档案背景使用 AI 辅助生成的本地资源。
+
+## 当前范围
+
+支持英文、马来语和中文，包含地图外链、参考资料入口、节日通知和 Apple Calendar 导出。没有月度离线缓存、后台持续刷新或 Home Screen Widget。现有目录没有自动化测试套件；API 可用性、真实设备通知及跨日期行为需要分别验收。
